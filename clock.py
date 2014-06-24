@@ -10,13 +10,16 @@ class clockOuter(object):
         self.width = width
         self.radius = radius
 
+
     def draw(self):
-        self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width)
+        self.outer = self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width)
+        self.canvas.tag_lower(self.outer)
 
 
 class hand(object):
 
-    def __init__(self, handType, canvas, length, centre, angle = 0.0, colour = "#000000", fill = "#000000", width = 1.0):
+    def __init__(self, root, handType, canvas, length, centre, angle = 0.0, colour = "#000000", fill = "#000000", width = 1.0):
+        self.root = root
         self.canvas = canvas
         self.colour = colour
         self.width = width
@@ -29,9 +32,11 @@ class hand(object):
         self.px = centre[0] + self.length*math.sin(self.angle)
         self.py = centre[0] - self.length*math.cos(self.angle)
         self.coords = (self.cx, self.cy, self.px, self.py)
+        self.shape = self.canvas.create_line(self.coords, fill = self.colour, width = self.width)
 
     def draw(self):
-        self.canvas.create_line(self.coords, fill = self.colour, width = self.width)
+        self.canvas.coords(self.shape, self.coords)
+        self.root.after(1000, self.draw)
 
     def tick(self):
         if self.handType == "second":
@@ -41,3 +46,4 @@ class hand(object):
             self.py = self.cy -self.length*math.cos(math.radians(self.angle))
             
             self.coords = (self.cx, self.cy, self.px, self.py)
+            self.root.after(1000, self.tick)
