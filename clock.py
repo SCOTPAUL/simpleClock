@@ -36,6 +36,7 @@ class hand(object):
     def tick(self):
         if self.handType == "second":
             self.angle += 6
+            self.angle %= 360
             self.px = self.cx + self.length*math.sin(math.radians(self.angle))
             self.py = self.cy -self.length*math.cos(math.radians(self.angle))
             

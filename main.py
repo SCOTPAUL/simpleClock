@@ -21,8 +21,9 @@ secondHand = clock.hand("second", win, clockFace.radius- (1/3.0)*clockFace.radiu
 win.delete("all")
 
 clockFace.draw()
-secondHand.draw()
-secondHand.tick()
-secondHand.draw()
+
+for times in range(3600):
+    secondHand.draw()
+    secondHand.tick()
 
 root.mainloop()
