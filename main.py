@@ -3,6 +3,7 @@
 from Tkinter import *
 import clock
 
+
 CANWIDTH = 500
 CANHEIGHT = 500
 
@@ -15,10 +16,14 @@ win.grid(ipadx = 10, ipady = 10)  #Places canvas on screen
 
 clockFace = clock.clockOuter(win, CANWIDTH/2.0 - 10, (CANWIDTH/2.0, CANHEIGHT/2.0), width = 5.0)
 secondHand = clock.hand(root, "second", win, clockFace.radius- (1/4.0)*clockFace.radius, (CANWIDTH/2.0, CANHEIGHT/2.0), width = 5.0, colour = "#FF0000")
+minuteHand = clock.hand(root, "minute", win, clockFace.radius- (1/3.0)*clockFace.radius, (CANWIDTH/2.0, CANHEIGHT/2.0), width = 8.0, colour = "#000000")
 
 clockFace.draw()
+secondHand.update()
+minuteHand.update()
 secondHand.draw()
-secondHand.tick()
+minuteHand.draw()
+
 
 root.mainloop()
 
