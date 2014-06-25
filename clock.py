@@ -48,18 +48,7 @@ class hand(object):
     def draw(self):
         self.canvas.coords(self.shape, self.coords)
         self.root.after(1000, self.draw)
-
-    def tick(self, amount):
-        if self.handType == "second":
-            self.angle += 6*amount
-            self.handTime += 1
-            self.handTime %= 60
-            self.angle %= 360
-            self.px = self.cx + self.length*math.sin(math.radians(self.angle))
-            self.py = self.cy -self.length*math.cos(math.radians(self.angle))
-            
-            self.coords = (self.cx, self.cy, self.px, self.py)
-            self.root.after(1000, self.tick)
+        
 
     def getTime(self):
         self.handTime = getTime(self.handType)
@@ -69,16 +58,18 @@ class hand(object):
     def setTime(self):
         if self.handType == "second" or self.handType == "minute":
             self.angle = 6*self.handTime
-            self.angle %= 360
-            self.px = self.cx + self.length*math.sin(math.radians(self.angle))
-            self.py = self.cy -self.length*math.cos(math.radians(self.angle))
-            
-            self.coords = (self.cx, self.cy, self.px, self.py)
+        elif self.handType == "hour":
+            self.angle = 30*self.handTime
+
+        self.angle %= 360
+        self.px = self.cx + self.length*math.sin(math.radians(self.angle))
+        self.py = self.cy -self.length*math.cos(math.radians(self.angle))
+        self.coords = (self.cx, self.cy, self.px, self.py)
 
 
     def update(self):
         self.getTime()
         self.setTime()
-        self.root.after(500, self.update)
+        self.root.after(1000, self.update)
 
 
