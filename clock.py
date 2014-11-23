@@ -26,7 +26,7 @@ class clockOuter(object):
 
 
     def drawOuterRing(self):
-        self.outer = self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width)
+        self.outer = self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width, tags="static")
         self.canvas.tag_lower(self.outer)
 
     def drawHourLines(self, num = 12, length = 20, width = 5.0, showNumbers = True, showNumbersSpace = 15, font = "sans"):
@@ -47,11 +47,12 @@ class clockOuter(object):
                 numY = startY + (length+ showNumbersSpace)*math.cos(angle)
 
                 if lines == 0:
-                    text = self.canvas.create_text(numX, numY, text= str(12), font = font)
+                    text = self.canvas.create_text(numX, numY, text= str(12), font = font, tags="static")
                 else:
-                    text = self.canvas.create_text(numX, numY, text= str(lines), font = font)
+                    text = self.canvas.create_text(numX, numY, text= str(lines), font = font, tags="static")
+                    
 
-            self.canvas.create_line(lineCoords, fill = self.colour, width = width)
+            self.canvas.create_line(lineCoords, fill = self.colour, width = width, tags="static")
             angle += angleStep
 
 
@@ -70,7 +71,7 @@ class clockCentre(object):
         self.radius = radius
 
     def draw(self):
-        self.shape = self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width)
+        self.shape = self.canvas.create_oval(self.coords, outline = self.colour, fill = self.fill, width = self.width, tags="static")
         self.canvas.tag_raise(self.shape)
 
 
@@ -86,39 +87,49 @@ class hand(object):
         self.length = float(length)
         self.handType = handType
         self.handTime = 0
+        self.centre = centre
+        self.scale = 1
 
-        self.cx = centre[0]
-        self.cy = centre[1]
-        self.px = centre[0] + self.length*math.sin(self.angle)
-        self.py = centre[1] - self.length*math.cos(self.angle)
+        self.cx = self.centre[0]
+        self.cy = self.centre[1]
+        self.px = self.centre[0] + self.length*math.sin(self.angle)
+        self.py = self.centre[1] - self.length*math.cos(self.angle)
         self.coords = (self.cx, self.cy, self.px, self.py)
         self.shape = self.canvas.create_line(self.coords, fill = self.colour, width = self.width)
+
+    def rescale(self, centre, scale):
+        self.length *= scale
+        self.centre = centre
+
+        self.cx = self.centre[0]
+        self.cy = self.centre[1]
+        self.setTime()
+
+        self.draw()
 
     def draw(self):
         self.canvas.coords(self.shape, self.coords)
 
         #Redraw every second
         self.root.after(1000, self.draw)
-        
 
     def getTime(self):
         self.handTime = getTime(self.handType)
         print self.handType, self.handTime
 
-
     def setTime(self):
         if self.handType == "second" or self.handType == "minute":
             self.angle = 6*self.handTime
         elif self.handType == "hour":
-            self.angle = 30*self.handTime
+            self.angle = 30*(self.handTime+ getTime("minute")/60.0)
 
         self.angle %= 360
         self.px = self.cx + self.length*math.sin(math.radians(self.angle))
         self.py = self.cy -self.length*math.cos(math.radians(self.angle))
         self.coords = (self.cx, self.cy, self.px, self.py)
 
-
     def update(self):
+
         self.getTime()
         self.setTime()
 
